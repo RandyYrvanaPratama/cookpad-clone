@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "896120528018",
+    "project_id": "cookpad-clone",
+    "storage_bucket": "cookpad-clone.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896120528018:android:bade9fb1c451d3f4c79a4b",
+        "android_client_info": {
+          "package_name": "com.example.cookpad_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFNZpryGeCNSEzedKFJNvq5U_kSulbrQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
