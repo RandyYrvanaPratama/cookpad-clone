@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,16 +16,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
 
   Future<void> _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('username', usernameController.text);
-    await prefs.setString('email', emailController.text);
-    await prefs.setString('password', passwordController.text);
+    try {
+      final auth = FirebaseAuth.instance;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Akun berhasil didaftarkan!')),
-    );
+      // 1. Register ke Firebase Auth
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-    Navigator.pushReplacementNamed(context, '/login');
+      // 2. Simpan user ke Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'username': usernameController.text,
+        'email': emailController.text,
+      });
+
+      // 3. Simpan ke SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('username', usernameController.text);
+      await prefs.setString('email', emailController.text);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Akun berhasil didaftarkan!')),
+      );
+
+      Navigator.pushReplacementNamed(context, '/login');
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'Pendaftaran gagal')),
+      );
+    }
   }
 
   @override

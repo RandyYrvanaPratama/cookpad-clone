@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,15 +15,37 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   Future<void> _login() async {
-    final prefs = await SharedPreferences.getInstance();
-    final storedEmail = prefs.getString('email');
-    final storedPassword = prefs.getString('password');
+    try {
+      final auth = FirebaseAuth.instance;
 
-    if (emailController.text == storedEmail && passwordController.text == storedPassword) {
+      // Login ke Firebase
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      final uid = userCredential.user!.uid;
+
+      // Ambil data user dari Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(uid)
+          .get();
+
+      // Simpan ke SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('userId', uid); // userId penting untuk tambah resep
+      await prefs.setString('username', userDoc['username'] ?? '');
+      await prefs.setString('email', userDoc['email'] ?? '');
+
       Navigator.pushReplacementNamed(context, '/home');
-    } else {
+    } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Email atau password salah')),
+        SnackBar(content: Text(e.message ?? 'Login gagal')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan: $e')),
       );
     }
   }

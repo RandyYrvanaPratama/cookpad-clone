@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -36,10 +33,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -59,4 +53,23 @@ class DefaultFirebaseOptions {
     projectId: 'cookpad-clone',
     storageBucket: 'cookpad-clone.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyAES40j0tfQdcjUM4A83zp-UOukvP6C7LU',
+    appId: '1:896120528018:web:6bd5c4eec594bd50c79a4b',
+    messagingSenderId: '896120528018',
+    projectId: 'cookpad-clone',
+    authDomain: 'cookpad-clone.firebaseapp.com',
+    storageBucket: 'cookpad-clone.firebasestorage.app',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAES40j0tfQdcjUM4A83zp-UOukvP6C7LU',
+    appId: '1:896120528018:web:05dafcc36eb1c67ec79a4b',
+    messagingSenderId: '896120528018',
+    projectId: 'cookpad-clone',
+    authDomain: 'cookpad-clone.firebaseapp.com',
+    storageBucket: 'cookpad-clone.firebasestorage.app',
+  );
+
 }
